@@ -24,7 +24,7 @@ export const theme: ThemeUserConfig = {
   },
   /** Set a logo image to show in the homepage. */
   logo: {
-    src: '/src/assets/Dropout.jpg',
+    src: '/src/assets/Dropout.png',
     alt: 'Dropout'
   },
 
@@ -48,8 +48,9 @@ export const theme: ThemeUserConfig = {
     menu: [
       { title: '文章', link: '/blog' },
       { title: '项目', link: '/projects' },
+      { title: '归档', link: '/archives' }, 
       { title: '友链', link: '/links' },
-      { title: '关于我', link: '/about' }
+      { title: '关于', link: '/about' }
     ]
   },
 
@@ -65,11 +66,6 @@ export const theme: ThemeUserConfig = {
         link: 'https://icp.gov.moe/?keyword=20260116',
         style: 'text-sm' // Uno/TW CSS class
       },
-      {
-        title: 'Travelling',
-        link: 'https://www.travellings.cn/go.html',
-        style: 'text-sm'
-      },
       // Privacy Policy link
       {
         title: 'Site Policy',
@@ -80,7 +76,7 @@ export const theme: ThemeUserConfig = {
     /** Enable displaying a “Astro & Pure theme powered” link in your site’s footer. */
     credits: true,
     /** Optional details about the social media accounts for this site. */
-    social: { github: 'https://github.com/cworld1/astro-theme-pure' }
+    social: { github: 'https://github.com/GoGo-Ye' }
   },
 
   // [Content]
@@ -161,7 +157,7 @@ export const integ: IntegrationUserConfig = {
   },
   // Comment system
   waline: {
-    enable: true,
+    enable: false,
     // Server service link
     server: 'https://astro-theme-pure-waline.arthals.ink/',
     // Refer https://waline.js.org/en/guide/features/emoji.html
