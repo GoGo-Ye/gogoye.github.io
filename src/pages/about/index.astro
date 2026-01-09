@@ -5,41 +5,153 @@ import Substats from '@/components/about/Substats.astro'
 import ToolSection from '@/components/about/ToolSection.astro'
 
 const headings = [
+  { depth: 2, slug: 'about-me', text: 'About Me' },
   { depth: 2, slug: 'hobbies', text: 'Hobbies' },
   { depth: 2, slug: 'tools', text: 'Tools' },
-  { depth: 2, slug: 'social-networks', text: 'Social Networks' },
-  { depth: 2, slug: 'gossips', text: 'Gossips' },
   { depth: 2, slug: 'about-blog', text: 'About Blog' }
 ]
 ---
 
-<PageLayout title='About' {headings} comment>
-  <p>Developer / Designer</p>
+<PageLayout title='About' {headings}>
+  <p class='text-xl'>🐻 在这里了解我和我的博客~</p>
+  <h2 id='about-me'>About Me</h2>
   <p>
-    Lorem ipsum dolor sit amet, vidit suscipit at mei. Quem denique mea id. Usu ei regione indoctum
-    dissentiunt, cu meliore fuisset mei, vel quod voluptua ne. Ex dicat impedit mel, at eum oratio
-    possit voluptatum.
+    一个USTCSE专业在读研究生。
   </p>
   <p>
-    Motto: Stay hungry, Stay foolish. <Spoiler>这里可以夹私货，比如为什么要演奏春日影！</Spoiler>
+    Motto: Everything I'm not made me evrything I am. <Spoiler>Kanye West is GOAT !</Spoiler>
   </p>
-  <Button title='Sponsor Me' class='w-fit' href='/projects#sponsorship' variant='ahead' />
-
+  {/* <Button title='Sponsor Me' class='w-fit' href='/projects#sponsorship' variant='ahead' /> */}
   {/* general-talk */}
   <h2 id='hobbies'>Hobbies</h2>
   <ul>
-    <li>Lorem ipsum dolor sit amet, vidit suscipit at mei.</li>
     <li>
-      Quem denique mea id. Usu ei regione indoctum dissentiunt, cu meliore fuisset mei, vel quod
-      voluptua ne.
+      音乐是良药 | 我爱HIPHOP，R&B，K-POP …  <Spoiler> Newjeans 快回归吧</Spoiler>
     </li>
-    <li>Ex dicat impedit mel, at eum oratio possit voluptatum.</li>
-    <li>Impetus fuisset ullamcorper pri cu, his posse iisque ad, aliquam honestatis usu id.</li>
+    <li>喜欢大狗嚼和哈基米</li>
+    <li>最会玩王者荣耀终极觉醒</li>
   </ul>
+
+  {/* 音乐播放器：移动端隐藏（核心修改：添加 media-player-container 类） */}
+  <div class="media-player-container">
+    <p class="text-lg">🎵 This is true music !</p>
+    
+    <div style="
+      width: 100%; 
+      max-width: 700px; 
+      margin: 15px auto 0; 
+      padding: 0;
+      box-sizing: border-box;
+      position: relative;
+      min-width: 280px;
+    ">
+      <!-- 网易云歌单iframe -->
+      <div>
+        <iframe 
+          src="https://music.163.com/outchain/player?type=0&id=17650040155&auto=0&height=280" 
+          style="
+            border: 1px solid #eee; 
+            width: 100%; 
+            height: 280px; 
+            display: block; 
+            border-radius: 8px;
+            min-height: 260px;
+            pointer-events: auto;
+          "
+          frameborder="0"
+          allow="autoplay; encrypted-media"
+          allowfullscreen="false"
+          loading="lazy"
+          title="我的音乐清单"
+          sandbox="allow-scripts allow-same-origin allow-popups allow-pointer-lock"
+          scrolling="no"
+        ></iframe>
+      </div>
+
+      <!-- 加载状态提示 -->
+      <div id="musicLoader" style="
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        right: 0; 
+        bottom: 0; 
+        background: #fff; 
+        border-radius: 8px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 14px; 
+        color: #666;
+        z-index: 1;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+      ">
+        音乐清单加载中...</div>
+
+      <!-- 手机端提示（移动端会随播放器一起隐藏，无需额外处理） -->
+      <p style="
+        text-align: center; 
+        font-size: 12px; 
+        color: #888; 
+        margin: 8px 0 0;
+        padding: 0 10px;
+      ">
+        点击播放按钮，可切换歌单内歌曲 🎵
+      </p>
+    </div>
+
+    <!-- 音乐播放器加载控制脚本 
+    解决TypeScript类型错误和移动端加载问题
+    包含多重加载检测机制和超时处理
+    -->
+    <script>
+      // 类型断言为HTMLIFrameElement解决类型错误
+      const musicIframe = document.querySelector('iframe[src*="music.163.com"]') as HTMLIFrameElement;
+      const musicLoader = document.getElementById('musicLoader');
+
+      if (musicIframe && musicLoader) {
+        // 监听iframe加载完成事件
+        musicIframe.onload = function() {
+          musicLoader.style.opacity = '0';
+          setTimeout(() => {
+            musicLoader.style.display = 'none';
+          }, 300);
+        };
+
+        // 定期检查iframe内容加载状态
+        const checkIframeLoaded = setInterval(() => {
+          try {
+            if (musicIframe.contentWindow && musicIframe.contentWindow.document.body) {
+              musicLoader.style.opacity = '0';
+              setTimeout(() => {
+                musicLoader.style.display = 'none';
+              }, 300);
+              clearInterval(checkIframeLoaded);
+            }
+          } catch (e) {}
+        }, 500);
+
+        // 超时处理机制
+        setTimeout(() => {
+          if (musicLoader.style.display !== 'none') {
+            musicLoader.innerHTML = '加载超时，点击刷新重试';
+            musicLoader.style.color = '#ff4444';
+            musicLoader.style.cursor = 'pointer';
+            musicLoader.addEventListener('click', () => {
+              musicIframe.src = musicIframe.src;
+              musicLoader.innerHTML = '重新加载中...';
+              musicLoader.style.color = '#666';
+            });
+          }
+          clearInterval(checkIframeLoaded);
+        }, 8000);
+      }
+    </script>
+  </div>
 
   {/* tools */}
   <h2 id='tools'>Tools</h2>
-  <p>Current support tools as follow:</p>
+{/*
   <ToolSection
     class='mb-5'
     title='Design'
@@ -70,33 +182,28 @@ const headings = [
       }
     ]}
   />
+*/}
   <ToolSection
     class='mb-5'
-    title='Productivity'
+    title='Daily Tools'
     tools={[
       {
-        name: 'Chrome',
+        name: 'Microsoft Edge',
         description: 'Browser',
-        href: 'https://www.google.com/chrome/',
-        icon: import('@/assets/tools/chrome.svg?raw')
+        href: 'https://www.microsoft.com/edge',
+        icon: import('@/assets/tools/edge.svg?raw')
       },
       {
-        name: 'Firefox',
-        description: 'Browser',
-        href: 'https://www.mozilla.org/en-US/firefox',
-        icon: import('@/assets/tools/firefox.svg?raw')
-      },
-      {
-        name: 'Notion',
-        description: 'Note Taking',
-        href: 'https://www.notion.so/',
-        icon: import('@/assets/tools/notion.svg?raw')
-      },
-      {
-        name: 'Typora',
+        name: 'SiYuan',
         description: 'Markdown Editor',
-        href: 'https://typora.io/',
-        icon: import('@/assets/tools/typora.svg?raw')
+        href: 'https://siyuannote.com/',
+        icon: import('@/assets/tools/siyuan.svg?raw')
+      },
+      {
+        name: 'Doubao',
+        description: 'AI Assistant',
+        href: 'https://www.doubao.com/',
+        icon: import('@/assets/tools/doubao.svg?raw')
       }
     ]}
   />
@@ -111,19 +218,26 @@ const headings = [
         icon: import('@/assets/tools/vscode.svg?raw')
       },
       {
-        name: 'Neovim',
+        name: 'Goland',
         description: 'IDE',
-        href: 'https://neovim.io/',
-        icon: import('@/assets/tools/neovim.svg?raw')
+        href: 'https://www.jetbrains.com/go/',
+        icon: import('@/assets/tools/goland.svg?raw')
       },
       {
-        name: 'Sublime Text',
+        name: 'Trae',
         description: 'IDE',
-        href: 'https://www.sublimetext.com/',
-        icon: import('@/assets/tools/sublime.svg?raw')
+        href: 'https://trae.ai/',
+        icon: import('@/assets/tools/trae.svg?raw')
+      },
+      {
+        name: 'Gemini',
+        description: 'AI Coding Assistant',
+        href: 'https://www.google.com/gemini/',
+        icon: import('@/assets/tools/gemini.svg?raw')
       }
     ]}
   />
+{/*
   <ToolSection
     class='mb-5'
     title='Environment'
@@ -154,8 +268,10 @@ const headings = [
       }
     ]}
   />
+*/}
 
   {/* social-networks */}
+{/*
   <h2 id='social-networks'>Social Networks</h2>
   <p>
     Lorem ipsum dolor sit amet, vidit suscipit at mei. Quem denique mea id. Usu ei regione indoctum
@@ -188,42 +304,32 @@ const headings = [
       }
     ]}
   />
-
-  {/* gossips */}
-  <h2 id='gossips'>Gossips</h2>
-  <Collapse title='Lorem ipsum'>
-    Lorem ipsum dolor sit amet, vidit suscipit at mei. Quem denique mea id. Usu ei regione indoctum
-    dissentiunt, cu meliore fuisset mei, vel quod voluptua ne. Ex dicat impedit mel, at eum oratio
-    possit voluptatum.
-  </Collapse>
+*/}
 
   {/* about-blog */}
   <h2 id='about-blog'>About Blog</h2>
-  <p>Website history:</p>
-  <Timeline
+  <Collapse title='Website history:'>
+    <Timeline
     events={[
       {
-        date: '2024-04-29',
+        date: '2025-12-31',
         content:
-          'Website refactored using <a href="https://astro.build/" target="_blank">Astro</a> and <a href="https://github.com/srleom/astro-theme-resume" target="_blank">Astro Theme Resume</a>'
+          '博客首次成功部署到Github Pages上，之前部署到Vercel上一直失败。'
       },
       {
-        date: '2024-07-26',
+        date: '2026-01-07',
         content:
-          'Website abstracted as a theme and published on <a href="https://github.com/cworld1/astro-theme-pure"target="_blank">Github</a>'
+          '申请了<a href="https://icp.gov.moe/?keyword=20260116"target="_blank">Moe ICP</a>。'
       },
       {
-        date: '2024-07-27',
-        content: 'Began writing website docs'
+        date: '2026-01-09',
+        content: '完成了所有主题设计。'
       }
     ]}
-  />
-  <p>
-    The smooth operation and personalized customization of website also rely on the resources and
-    technical support provided by the following excellent projects/service providers:
-  </p>
+    />
+  </Collapse>
+
   <ul>
-    <li>Domain: <a href='#' target='_blank'>Vercel</a></li>
     <li>
       Framework & Theme: <a href='https://astro.build/' target='_blank'>Astro</a> + <a
         href='https://github.com/cworld1/astro-theme-pure'
@@ -231,13 +337,14 @@ const headings = [
       >
     </li>
     <li>
-      Site hosting: <a href='https://vercel.com/' target='_blank'>Vercel</a>
+      Site hosting: <a href='https://githubdocs.cn/en/pages/getting-started-with-github-pages' target='_blank'>Github Pages</a>
     </li>
     <li>
-      CI/CD: <a href='https://vercel.com/workflow' target='_blank'>Vercel Workflow</a>
+      CI/CD: <a href='https://githubdocs.cn/zh/actions' target='_blank'>Github Actions</a>
     </li>
-    <li>Comment system: <a href='https://waline.js.org' target='_blank'>Waline</a></li>
-    <li>
+{/* 
+<li>Comment system: <a href='https://waline.js.org' target='_blank'>Waline</a></li> 
+<li>
       Visits: <a href='https://supabase.com/' target='_blank'>Supabase</a> +
       <a href='https://waline.js.org/' target='_blank'>Waline</a>
     </li>
@@ -246,5 +353,7 @@ const headings = [
         >Substats</a
       >
     </li>
+*/}
+    
   </ul>
 </PageLayout>
