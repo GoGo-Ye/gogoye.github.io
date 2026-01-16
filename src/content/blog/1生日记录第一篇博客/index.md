@@ -4,7 +4,7 @@ publishDate: 2026-01-16
 description: '今天过生日！🎂'
 tags:
   - 日常
-heroImage: { src: './1.png', color: '#B4C6DA' }
+heroImage: { src: './1.PNG', color: '#B4C6DA' }
 ---
 
 **晚上12点多刷B站弹出个“Happy Birthday"的开屏，这才想起来今天过生日。😅**
